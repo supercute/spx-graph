@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-// ParseProfile парсит SPX профайл из файла
+// ParseProfile parse spx profile from file
 func ParseProfile(filename string) (*Profile, error) {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -20,7 +20,6 @@ func ParseProfile(filename string) (*Profile, error) {
 
 	var scanner *bufio.Scanner
 
-	// Проверяем, сжат ли файл
 	if filepath.Ext(filename) == ".gz" {
 		gzReader, err := gzip.NewReader(file)
 		if err != nil {
@@ -48,7 +47,7 @@ func ParseProfile(filename string) (*Profile, error) {
 			continue
 		}
 
-		// Переключение секций
+		// switch sections
 		if line == "[events]" {
 			inEvents = true
 			inFunctions = false
@@ -61,7 +60,7 @@ func ParseProfile(filename string) (*Profile, error) {
 			continue
 		}
 
-		// Парсинг событий
+		// parse events
 		if inEvents {
 			event, err := parseEvent(line)
 			if err != nil {
@@ -70,7 +69,7 @@ func ParseProfile(filename string) (*Profile, error) {
 			profile.Events = append(profile.Events, event)
 		}
 
-		// Парсинг функций
+		// parse functions
 		if inFunctions {
 			profile.Functions[functionIndex] = line
 			functionIndex++
@@ -84,7 +83,7 @@ func ParseProfile(filename string) (*Profile, error) {
 	return profile, nil
 }
 
-// parseEvent парсит одну строку события
+// parseEvent parse event
 func parseEvent(line string) (Event, error) {
 	parts := strings.Fields(line)
 	if len(parts) != 4 {
